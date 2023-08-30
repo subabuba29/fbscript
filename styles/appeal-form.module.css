@@ -145,6 +145,7 @@
     border-radius: 4px !important;
     padding: 1.4rem 0.75rem !important;
     resize: none !important;
+    font-family: Helvetica;
 }
 
 .appeal form .formGroup textarea:focus{
@@ -166,6 +167,7 @@
     border-radius: 4px !important;
     padding: 15px;
     resize: none !important;
+    font-family: Helvetica;
 }
 
 .appeal form .formGroup label{
@@ -191,6 +193,7 @@
     border-radius: 4px;
     text-transform: none;
     font-family: Helvetica;
+    cursor: pointer;
 }
 
 .modal{

