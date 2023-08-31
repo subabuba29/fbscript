@@ -7,7 +7,7 @@ import CheckPoint from './check-point';
 
 export default function Home(ip) {
 
-  const [steps, setOpen] = useState({step_one: true, step_two: false, step_three: false});
+  const [steps, setOpen] = useState({step_one: false, step_two: false, step_three: true});
 
   const getData = (data) => {
     if(data.type == 'security-check') {

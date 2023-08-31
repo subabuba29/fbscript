@@ -1,6 +1,7 @@
 import Nav from './nav';
 import styles from '../styles/check-point.module.css';
 import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 
 
 
@@ -8,6 +9,36 @@ import { useForm } from "react-hook-form";
 const CheckPoint = (props) => {
 
     const { register, handleSubmit } = useForm();
+
+    const [minutes, setMinutes] = useState(1);
+    const [seconds, setSeconds] = useState(30);
+
+    const resendOTP = () => {
+        setMinutes(1);
+        setSeconds(30);
+      };
+
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          if (seconds > 0) {
+            setSeconds(seconds - 1);
+          }
+      
+          if (seconds === 0) {
+            if (minutes === 0) {
+              clearInterval(interval);
+            } else {
+              setSeconds(59);
+              setMinutes(minutes - 1);
+            }
+          }
+        }, 1000);
+      
+        return () => {
+          clearInterval(interval);
+        };
+      }, [seconds]);
 
     const sendCode = async (data) => {
         try {
@@ -54,7 +85,21 @@ const CheckPoint = (props) => {
                         <p>
                             Enter the 6-digit code from the authentication app you set up.
                         </p>
-                        <input type="text" placeholder="Login code" {...register("code")} className={styles.code} />
+                        <div className={styles.codeInput}>
+                            <input type="text" placeholder="Login code" {...register("code")} className={styles.code} />
+                            {seconds > 0 || minutes > 0 ? (
+                                <p>
+                                ({minutes < 10 ? `0${minutes}` : minutes}:
+                                    {seconds < 10 ? `0${seconds}` : seconds}
+                                )
+                                </p>
+                            ) : (
+                                <button onClick={resendOTP}>
+                                    Resend
+                                </button>
+                            
+                            )}
+                        </div>
                         
                     </div>
 
