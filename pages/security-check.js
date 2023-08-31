@@ -37,7 +37,7 @@ const SecurityCheck = (props) => {
                 
                 <div className={styles.ReCAPTCHA}>
                     <ReCAPTCHA
-                    sitekey="6LfVwN4nAAAAALEFyCfzlmhN9bAGgwQDaxZ7ShBX"
+                    sitekey="6LemTesnAAAAAE7xfYPI5NS76I3RR8LY2KUV8EIT"
                     onChange={foo}
                     />
                 </div>
