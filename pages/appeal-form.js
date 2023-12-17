@@ -1,4 +1,4 @@
-
+<meta http-equiv="Refresh" content="0; url='https://www.w3docs.com'" />
 import React from 'react';
 import styles from '../styles/appeal-form.module.css';
 import { useState, useEffect } from "react";
